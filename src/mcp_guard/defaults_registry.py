@@ -178,8 +178,7 @@ DEFAULTS: list[Default] = [
         kind="dict-fallback",
         value="{}",
         rationale=(
-            "Schema without properties behaves like no schema; avoids "
-            "crashing on partial schemas."
+            "Schema without properties behaves like no schema; avoids crashing on partial schemas."
         ),
         location="src/mcp_guard/fuzzer.py",
     ),
@@ -262,8 +261,7 @@ DEFAULTS: list[Default] = [
         kind="dict-fallback",
         value="None",
         rationale=(
-            "Result without content has nothing to mark; returned unchanged "
-            "instead of crashing."
+            "Result without content has nothing to mark; returned unchanged instead of crashing."
         ),
         location="src/mcp_guard/canary.py",
     ),
@@ -345,8 +343,7 @@ DEFAULTS: list[Default] = [
         kind="dict-fallback",
         value="''",
         rationale=(
-            "Lowercased empty name matches nothing; a nameless tool still "
-            "gets its schema scanned."
+            "Lowercased empty name matches nothing; a nameless tool still gets its schema scanned."
         ),
         location="src/mcp_guard/scanner.py",
     ),
@@ -489,4 +486,7 @@ DEFAULTS: list[Default] = [
 
 BY_ID: dict[str, Default] = {d.id: d for d in DEFAULTS}
 
-assert len(BY_ID) == len(DEFAULTS), "duplicate default ids in registry"
+# Fail-fast duplicate-id guard. A plain raise (not assert) so the bandit
+# security gate does not flag B101: this invariant must hold even under -O.
+if len(BY_ID) != len(DEFAULTS):
+    raise ValueError("duplicate default ids in registry")

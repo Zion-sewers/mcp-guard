@@ -46,7 +46,7 @@ def _val_repr(node: ast.AST) -> str:
         return node.id
     try:
         return ast.unparse(node)
-    except Exception:  # pragma: no cover - defensive
+    except Exception:  # noqa: BLE001 - unparse is best-effort
         return "?"
 
 
@@ -74,7 +74,7 @@ class _Extractor(ast.NodeVisitor):
         # signature defaults, excluding None ("absent" sentinel, see docstring)
         args = node.args
         defaults = args.defaults
-        positional = args.args[-len(defaults):] if defaults else []
+        positional = args.args[-len(defaults) :] if defaults else []
         for arg, d in zip(positional, defaults):
             if isinstance(d, ast.Constant) and d.value is None:
                 continue
@@ -148,7 +148,7 @@ class _Extractor(ast.NodeVisitor):
         else:
             try:
                 keypart = "~" + ast.unparse(k)[:30]
-            except Exception:  # pragma: no cover - defensive
+            except Exception:  # noqa: BLE001 - unparse is best-effort
                 keypart = "~?"
         default = _val_repr(node.args[1]) if len(node.args) >= 2 else "None"
         key = f"{self.module}:{self._scope()}:{keypart}"
@@ -173,7 +173,9 @@ def _scan_all() -> dict[str, tuple[str, str]]:
             # A repeated identical construct (e.g. tool.get("name","unknown")
             # twice in one function) is one default, not two.
             if key in out:
-                assert out[key] == (kind, value), f"conflicting {key}: {out[key]} vs {(kind, value)}"
+                assert out[key] == (kind, value), (
+                    f"conflicting {key}: {out[key]} vs {(kind, value)}"
+                )
             out[key] = (kind, value)
     return out
 
@@ -184,7 +186,8 @@ def test_registry_covers_all_code_defaults():
     missing = sorted(set(code) - set(BY_ID))
     assert not missing, (
         "Undeclared defaults found — add each to defaults_registry.py with a "
-        f"rationale:\n" + "\n".join(f"  {k} ({code[k][0]} = {code[k][1]})" for k in missing)
+        "rationale:\n"
+        + "\n".join(f"  {k} ({code[k][0]} = {code[k][1]})" for k in missing)
     )
 
 
@@ -208,7 +211,9 @@ def test_registry_values_match_code():
                 f"  {key}: registry says {entry.value!r}, code has {code[key][1]!r} "
                 f"— update the registry entry (value AND rationale)"
             )
-    assert not mismatches, "Default values drifted from the registry:\n" + "\n".join(mismatches)
+    assert not mismatches, "Default values drifted from the registry:\n" + "\n".join(
+        mismatches
+    )
 
 
 def test_registry_kinds_match_code():

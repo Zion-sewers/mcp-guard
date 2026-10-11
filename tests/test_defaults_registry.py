@@ -22,6 +22,11 @@ Scope decisions (deliberate, documented):
     scope (implicit None, same reason).
   - `action="store_true"` / `"store_false"` ARE tracked (as False / True):
     they are real behavioral defaults.
+  - `pyproject.toml` was audited (2026-10-11) and contains no behavioral
+    defaults: it holds build metadata, entry points, and linter/test/type
+    config — none of which are nudges in the issue's sense
+    (default-allow/deny, fallback values, timeout verdicts). All 45
+    registered defaults live in Python code, which is what the AST scans.
 """
 
 from __future__ import annotations
@@ -159,7 +164,7 @@ class _Extractor(ast.NodeVisitor):
 def _scan_all() -> dict[str, tuple[str, str]]:
     """Map key -> (kind, value) for every default-like construct in src."""
     out: dict[str, tuple[str, str]] = {}
-    for path in sorted(SRC.glob("*.py")):
+    for path in sorted(SRC.rglob("*.py")):
         if path.name == "defaults_registry.py":
             continue  # the registry describes the code; it is not the code
         ext = _Extractor(path.stem)

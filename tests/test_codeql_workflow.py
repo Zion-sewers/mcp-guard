@@ -10,9 +10,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-WORKFLOW = (
-    Path(__file__).resolve().parent.parent / ".github" / "workflows" / "codeql.yml"
-)
+WORKFLOW = Path(__file__).resolve().parent.parent / ".github" / "workflows" / "codeql.yml"
 
 
 @pytest.fixture(scope="module")
@@ -64,9 +62,7 @@ def test_weekly_schedule_mondays(doc: dict) -> None:
 
 def test_push_and_pull_request_triggers(doc: dict) -> None:
     on = doc["on"]
-    assert "push" in on and "pull_request" in on, (
-        "CodeQL must run on push and pull_request"
-    )
+    assert "push" in on and "pull_request" in on, "CodeQL must run on push and pull_request"
 
 
 def test_codeql_init_uses_matrix_language(analyze: dict) -> None:

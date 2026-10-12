@@ -41,9 +41,7 @@ def generate_shell_injection() -> list[Payload]:
             Severity.CRITICAL,
             "Semicolon command separator",
         ),
-        Payload(
-            "$(whoami)", "shell-injection", Severity.CRITICAL, "Command substitution"
-        ),
+        Payload("$(whoami)", "shell-injection", Severity.CRITICAL, "Command substitution"),
         Payload(
             "`cat /etc/passwd`",
             "shell-injection",
@@ -105,9 +103,7 @@ def generate_ssrf() -> list[Payload]:
             Severity.CRITICAL,
             "Local file read via file://",
         ),
-        Payload(
-            "http://[::1]:8080/admin", "ssrf", Severity.HIGH, "IPv6 localhost bypass"
-        ),
+        Payload("http://[::1]:8080/admin", "ssrf", Severity.HIGH, "IPv6 localhost bypass"),
         Payload("http://0x7f000001/", "ssrf", Severity.MEDIUM, "Hex-encoded localhost"),
         Payload(
             "dict://127.0.0.1:6379/INFO",
@@ -263,9 +259,7 @@ def generate_indirect_injection() -> list[Payload]:
     ]
 
 
-def generate_all_for_param(
-    param_name: str, param_schema: dict[str, Any]
-) -> list[Payload]:
+def generate_all_for_param(param_name: str, param_schema: dict[str, Any]) -> list[Payload]:
     """Generate targeted payloads based on parameter type."""
     ptype = param_schema.get("type", "string").lower()
     fmt = param_schema.get("format", "").lower()

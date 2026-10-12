@@ -45,9 +45,7 @@ def _section(text: str, start: str, end: str) -> str:
 def _two_col_rows(section: str) -> dict[str, int]:
     """Map label -> count for exactly-two-column markdown table rows."""
     rows: dict[str, int] = {}
-    for m in re.finditer(
-        r"^\|\s*([^|]+?)\s*\|\s*(\d+)\s*\|\s*$", section, re.MULTILINE
-    ):
+    for m in re.finditer(r"^\|\s*([^|]+?)\s*\|\s*(\d+)\s*\|\s*$", section, re.MULTILINE):
         rows[m.group(1).strip()] = int(m.group(2))
     return rows
 
@@ -55,9 +53,7 @@ def _two_col_rows(section: str) -> dict[str, int]:
 def _severity_table(section: str) -> dict[str, int]:
     """Map severity -> weight from the three-column severity table."""
     rows: dict[str, int] = {}
-    for m in re.finditer(
-        r"^\|\s*([A-Z]+)\s*\|\s*(\d+)\s*\|[^|]*\|\s*$", section, re.MULTILINE
-    ):
+    for m in re.finditer(r"^\|\s*([A-Z]+)\s*\|\s*(\d+)\s*\|[^|]*\|\s*$", section, re.MULTILINE):
         rows[m.group(1).strip()] = int(m.group(2))
     return rows
 
@@ -117,9 +113,7 @@ class TestPayloadCountsMatchGenerators:
             f"generators produce {actual} — update the doc or the generators"
         )
 
-    def test_string_breakdown_classes_match_generators(
-        self, counts_section: str
-    ) -> None:
+    def test_string_breakdown_classes_match_generators(self, counts_section: str) -> None:
         """Each documented payload class equals its live generator.
 
         Names which class drifted, without hard-coding any count in the test:
@@ -337,9 +331,7 @@ class TestPayloadDocSync:
             readme,
         )
         assert m, "README 'What It Does' lost its payload-count sentence"
-        assert int(m.group(1)) == len(
-            generate_all_for_param("name", {"type": "string"})
-        )
+        assert int(m.group(1)) == len(generate_all_for_param("name", {"type": "string"}))
         assert int(m.group(2)) == len(
             generate_all_for_param("url", {"type": "string", "format": "uri"})
         )
@@ -347,9 +339,7 @@ class TestPayloadDocSync:
     def test_readme_methodology_table(self, readme: str, no_schema_n: int) -> None:
         section = _section(readme, "## Methodology", "## License")
         rows = _two_col_rows(section)
-        assert rows["String parameter"] == len(
-            generate_all_for_param("name", {"type": "string"})
-        )
+        assert rows["String parameter"] == len(generate_all_for_param("name", {"type": "string"}))
         assert rows["URI-typed string parameter"] == len(
             generate_all_for_param("url", {"type": "string", "format": "uri"})
         )
@@ -363,9 +353,7 @@ class TestPayloadDocSync:
         assert m, "README lost its probe-types section"
         section = _section(readme, m.group(0), "Payloads are schema-aware")
         # probe table rows are keyed by bold probe names, not digits
-        data_rows = [
-            line for line in section.splitlines() if line.strip().startswith("| **")
-        ]
+        data_rows = [line for line in section.splitlines() if line.strip().startswith("| **")]
         # six generator families: shell, ssrf, overflow, type-confusion,
         # prompt-injection, indirect-injection — derived, not literal:
         n_families = len(_family_rule_ids())
@@ -400,9 +388,7 @@ class TestPayloadDocSync:
             f"the family, or the doc-sync tests go stale"
         )
         stale = set(FAMILY_GENERATORS) - module_gens
-        assert not stale, (
-            f"FAMILY_GENERATORS names removed generator(s) {sorted(stale)}"
-        )
+        assert not stale, f"FAMILY_GENERATORS names removed generator(s) {sorted(stale)}"
 
     def test_spec_probe_summary_table_family_count(self, spec: str) -> None:
         """The '### Fuzz Probes (v1)' summary table must list every family.
@@ -410,9 +396,7 @@ class TestPayloadDocSync:
         #13's implementation review caught this table still enumerating 5
         probes after the taxonomy gained its 6th — this test pins it."""
         section = _section(spec, "### Fuzz Probes (v1)", "### Payload Intelligence")
-        data_rows = [
-            line for line in section.splitlines() if line.strip().startswith("| **")
-        ]
+        data_rows = [line for line in section.splitlines() if line.strip().startswith("| **")]
         n_families = len(_family_rule_ids())
         assert len(data_rows) == n_families, (
             f"spec probe summary table has {len(data_rows)} rows, generators "
@@ -462,9 +446,7 @@ class TestPayloadDocSync:
             rows = _table_data_rows(sections[rule_id])
             payloads = gen()
             assert len(rows) == len(payloads)
-            for raw_line, payload in zip(
-                _taxonomy_raw_lines(sections[rule_id]), payloads
-            ):
+            for raw_line, payload in zip(_taxonomy_raw_lines(sections[rule_id]), payloads):
                 # payload cells may contain '|' — parse severity from the right
                 parts = raw_line.rsplit("|", 3)
                 assert len(parts) == 4, f"unparseable taxonomy row: {raw_line!r}"
@@ -511,9 +493,7 @@ class TestPayloadDocSync:
     def test_blog_string_count(self, blog: str) -> None:
         m = re.search(r"Fires (\d+) payloads per string parameter", blog)
         assert m, "blog lost its per-string-parameter count claim"
-        assert int(m.group(1)) == len(
-            generate_all_for_param("name", {"type": "string"})
-        )
+        assert int(m.group(1)) == len(generate_all_for_param("name", {"type": "string"}))
 
     def test_blog_no_schema_count(self, blog: str, no_schema_n: int) -> None:
         m = re.search(r"full suite of (\d+) payloads", blog)

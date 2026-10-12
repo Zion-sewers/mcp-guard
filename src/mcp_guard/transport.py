@@ -126,9 +126,7 @@ class StdioTransport:
         if thread.is_alive():
             if self._proc and self._proc.poll() is None:
                 self._proc.kill()
-            raise TimeoutError(
-                f"No response from server within {self._timeout}s timeout"
-            )
+            raise TimeoutError(f"No response from server within {self._timeout}s timeout")
 
         response_line = q.get()
         if not response_line:

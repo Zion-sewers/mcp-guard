@@ -53,9 +53,7 @@ class FuzzResult:
 
 
 class Transport(Protocol):
-    def call_tool(
-        self, tool_name: str, arguments: dict[str, Any]
-    ) -> dict[str, Any]: ...
+    def call_tool(self, tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]: ...
 
 
 class FuzzEngine:

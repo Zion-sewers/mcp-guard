@@ -76,11 +76,7 @@ def test_exfil_channel_detected_even_without_canary():
         return echoed.replace(INDIRECT_CANARY, "[redacted]")
 
     engine = FuzzEngine(transport=EchoTransport(transform=strip_canary))
-    exfil = [
-        r
-        for r in engine.fuzz_tool(_TOOL)
-        if r.rule_id == "indirect-injection-exfil-channel"
-    ]
+    exfil = [r for r in engine.fuzz_tool(_TOOL) if r.rule_id == "indirect-injection-exfil-channel"]
     assert exfil, "exfil-shaped markdown in tool output must be flagged"
     assert all(f.severity == "critical" for f in exfil)
 

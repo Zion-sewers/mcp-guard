@@ -227,10 +227,7 @@ class TestEscapeMd:
         assert escape_md("line one\r\nsmuggled line") == "line one\nsmuggled line"
 
     def test_benign_subject_untouched(self):
-        assert (
-            escape_md("fix: handle timeouts in canary")
-            == "fix: handle timeouts in canary"
-        )
+        assert escape_md("fix: handle timeouts in canary") == "fix: handle timeouts in canary"
 
     def test_first_release_path_also_escaped(self):
         evil = "[x](https://evil.example)"

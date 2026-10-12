@@ -95,11 +95,7 @@ def _counts_table() -> dict[str, int]:
 def test_payload_counts_match_live_generators() -> None:
     """The per-input-type table must equal the real generator output."""
     table = _counts_table()
-    assert (
-        table["String parameter"]
-        == len(generate_all_for_param("q", {"type": "string"}))
-        == 29
-    )
+    assert table["String parameter"] == len(generate_all_for_param("q", {"type": "string"})) == 29
     assert (
         table["URI-typed string parameter"]
         == len(generate_all_for_param("url", {"type": "string", "format": "uri"}))

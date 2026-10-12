@@ -10,7 +10,9 @@ def test_scanner_flags_tool_with_shell_command():
         "description": "Execute a bash command on the server",
         "inputSchema": {
             "type": "object",
-            "properties": {"command": {"type": "string", "description": "Shell command to run"}},
+            "properties": {
+                "command": {"type": "string", "description": "Shell command to run"}
+            },
             "required": ["command"],
         },
     }
@@ -20,7 +22,9 @@ def test_scanner_flags_tool_with_shell_command():
 
     assert len(results) > 0, "Scanner must return at least one finding"
 
-    shell_findings = [r for r in results if "shell" in r.rule_id or "command" in r.rule_id]
+    shell_findings = [
+        r for r in results if "shell" in r.rule_id or "command" in r.rule_id
+    ]
     assert len(shell_findings) > 0, "Must flag shell/command injection"
     assert shell_findings[0].severity == Severity.CRITICAL
     assert isinstance(shell_findings[0], ScanResult)
@@ -33,7 +37,9 @@ def test_scanner_passes_safe_tool():
         "description": "Get current weather for a city",
         "inputSchema": {
             "type": "object",
-            "properties": {"city": {"type": "string", "enum": ["tel-aviv", "london", "nyc"]}},
+            "properties": {
+                "city": {"type": "string", "enum": ["tel-aviv", "london", "nyc"]}
+            },
             "required": ["city"],
         },
     }
@@ -89,7 +95,9 @@ def test_scanner_flags_second_url_param_after_benign_first():
 
     assert "callback" in by_param, "enum-constrained URL param must be flagged"
     assert by_param["callback"].severity == Severity.WARNING
-    assert "target" in by_param, "free-form URL param after a benign one must be flagged (#131)"
+    assert "target" in by_param, (
+        "free-form URL param after a benign one must be flagged (#131)"
+    )
     assert by_param["target"].severity == Severity.CRITICAL
 
 
@@ -102,7 +110,10 @@ def test_scanner_flags_all_shell_params_not_just_first():
         "inputSchema": {
             "properties": {
                 "command": {"type": "string", "description": "command to run"},
-                "script_path": {"type": "string", "description": "path to helper script"},
+                "script_path": {
+                    "type": "string",
+                    "description": "path to helper script",
+                },
             }
         },
     }
@@ -111,7 +122,9 @@ def test_scanner_flags_all_shell_params_not_just_first():
     shell = [r for r in results if r.rule_id == "shell-injection"]
     flagged = {r.message.split("'")[1] for r in shell}
 
-    assert flagged == {"command", "script_path"}, f"both shell params must be flagged, got {flagged}"
+    assert flagged == {"command", "script_path"}, (
+        f"both shell params must be flagged, got {flagged}"
+    )
     assert all(r.severity == Severity.CRITICAL for r in shell)
 
 

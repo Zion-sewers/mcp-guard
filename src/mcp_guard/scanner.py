@@ -115,7 +115,9 @@ class Scanner:
 
         return results
 
-    def _check_ssrf(self, name: str, desc: str, properties: dict[str, Any]) -> list[ScanResult]:
+    def _check_ssrf(
+        self, name: str, desc: str, properties: dict[str, Any]
+    ) -> list[ScanResult]:
         results: list[ScanResult] = []
         tool_ref = name or "unknown"
 

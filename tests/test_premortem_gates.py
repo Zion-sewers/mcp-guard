@@ -131,7 +131,11 @@ def test_mode5_unknown_protocol_fields_degrade_gracefully() -> None:
     not crash the transport.
     """
     response = json.dumps(
-        {"jsonrpc": "2.0", "id": 1, "result": {"ok": True, "futureUnknownField": [1, 2, 3]}}
+        {
+            "jsonrpc": "2.0",
+            "id": 1,
+            "result": {"ok": True, "futureUnknownField": [1, 2, 3]},
+        }
     )
     t, _ = _transport_with_stdout(response + "\n")
     result = t._read_response()

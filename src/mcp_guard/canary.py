@@ -81,7 +81,9 @@ class CanaryVerdict:
 class CanaryTrap:
     """Issues canaries, smuggles them into tool outputs, scans agent actions."""
 
-    def __init__(self, token_factory: Callable[[], str] = _default_token_factory) -> None:
+    def __init__(
+        self, token_factory: Callable[[], str] = _default_token_factory
+    ) -> None:
         self._token_factory = token_factory
         self._registry: dict[str, Canary] = {}
         self._seq = 0
@@ -116,7 +118,9 @@ class CanaryTrap:
             new_content = []
             for block in content:
                 if isinstance(block, dict) and block.get("type") == "text":
-                    marked_text, canary = self.smuggle(str(block.get("text", "")), source)
+                    marked_text, canary = self.smuggle(
+                        str(block.get("text", "")), source
+                    )
                     marked_blocks.append(canary)
                     new_content.append({**block, "text": marked_text})
                 else:
@@ -150,7 +154,11 @@ class CanaryTrap:
             return CanaryVerdict(
                 status="clean", severity="info", hits=(), summary="no canary in action"
             )
-        drift = [h for h in hits if h.sink_kind == "tool_call" and h.sink_name != h.canary.source]
+        drift = [
+            h
+            for h in hits
+            if h.sink_kind == "tool_call" and h.sink_name != h.canary.source
+        ]
         if drift:
             sources = sorted({h.canary.source for h in drift})
             sinks = sorted({h.sink_name for h in drift})

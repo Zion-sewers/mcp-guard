@@ -98,7 +98,9 @@ class FuzzReport:
                 f"tools_fuzzed={self.tools_fuzzed} != distinct tools in results={len(distinct_tools)}"
             )
         if problems:
-            raise ValueError("report summary inconsistent with results: " + "; ".join(problems))
+            raise ValueError(
+                "report summary inconsistent with results: " + "; ".join(problems)
+            )
 
     def _provenance(self) -> dict[str, str]:
         """Machine-readable provenance block (Finding A). Never empty."""
@@ -150,7 +152,9 @@ class FuzzReport:
         if self.crashes:
             out.write("  VERDICT: VULNERABLE — crashes detected\n")
         elif self.findings:
-            out.write(f"  VERDICT: {len(self.findings)} findings require investigation\n")
+            out.write(
+                f"  VERDICT: {len(self.findings)} findings require investigation\n"
+            )
         else:
             out.write("  VERDICT: CLEAN — all payloads handled safely\n")
         out.write(f"{'=' * 72}\n")
@@ -205,7 +209,9 @@ class FuzzReport:
             if r.rule_id not in rules_map:
                 idx = len(rules_list) + 1
                 rules_map[r.rule_id] = idx
-                rules_list.append({"id": r.rule_id, "shortDescription": {"text": r.rule_id}})
+                rules_list.append(
+                    {"id": r.rule_id, "shortDescription": {"text": r.rule_id}}
+                )
 
             sarif_level = "error" if r.category == ResultCategory.CRASH else "warning"
             results_sarif.append(
@@ -215,7 +221,11 @@ class FuzzReport:
                     "level": sarif_level,
                     "message": {"text": r.detail},
                     "locations": [
-                        {"physicalLocation": {"artifactLocation": {"uri": f"mcp://{r.tool_name}"}}}
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {"uri": f"mcp://{r.tool_name}"}
+                            }
+                        }
                     ],
                 }
             )
@@ -237,7 +247,9 @@ class FuzzReport:
                         "mcp-guard.run_id": prov["run_id"],
                         "mcp-guard.run_at": prov["run_at"],
                         "mcp-guard.data_source": prov["data_source"],
-                        "mcp-guard.payload_ruleset_version": prov["payload_ruleset_version"],
+                        "mcp-guard.payload_ruleset_version": prov[
+                            "payload_ruleset_version"
+                        ],
                     },
                     "results": results_sarif,
                 }

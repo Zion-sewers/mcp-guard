@@ -109,7 +109,8 @@ class _Extractor(ast.NodeVisitor):
     def _add_argument(self, node: ast.Call) -> None:
         recv = (
             node.func.value.id
-            if isinstance(node.func, ast.Attribute) and isinstance(node.func.value, ast.Name)
+            if isinstance(node.func, ast.Attribute)
+            and isinstance(node.func.value, ast.Name)
             else "?"
         )
         flag = "?"
@@ -185,7 +186,8 @@ def test_registry_covers_all_code_defaults():
     missing = sorted(set(code) - set(BY_ID))
     assert not missing, (
         "Undeclared defaults found — add each to defaults_registry.py with a "
-        "rationale:\n" + "\n".join(f"  {k} ({code[k][0]} = {code[k][1]})" for k in missing)
+        "rationale:\n"
+        + "\n".join(f"  {k} ({code[k][0]} = {code[k][1]})" for k in missing)
     )
 
 
@@ -209,7 +211,9 @@ def test_registry_values_match_code():
                 f"  {key}: registry says {entry.value!r}, code has {code[key][1]!r} "
                 f"— update the registry entry (value AND rationale)"
             )
-    assert not mismatches, "Default values drifted from the registry:\n" + "\n".join(mismatches)
+    assert not mismatches, "Default values drifted from the registry:\n" + "\n".join(
+        mismatches
+    )
 
 
 def test_registry_kinds_match_code():

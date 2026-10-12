@@ -36,20 +36,28 @@ def main(argv: list[str] | None = None) -> None:
         description="Adversarial fuzzer for MCP servers — break before they break you.",
     )
     parser.add_argument("--verbose", action="store_true", help="Enable verbose logging")
-    parser.add_argument("--quiet", action="store_true", help="Suppress all non-error output")
+    parser.add_argument(
+        "--quiet", action="store_true", help="Suppress all non-error output"
+    )
     sub = parser.add_subparsers(dest="command")
 
     # fuzz subcommand
     fuzz_parser = sub.add_parser("fuzz", help="Fuzz an MCP server via stdio transport")
-    fuzz_parser.add_argument("--format", choices=["table", "json", "sarif"], default="table")
-    fuzz_parser.add_argument("--delay-ms", type=int, default=0, help="Delay between payloads (ms)")
+    fuzz_parser.add_argument(
+        "--format", choices=["table", "json", "sarif"], default="table"
+    )
+    fuzz_parser.add_argument(
+        "--delay-ms", type=int, default=0, help="Delay between payloads (ms)"
+    )
     fuzz_parser.add_argument(
         "--timeout", type=float, default=10.0, help="Per-tool-call timeout (seconds)"
     )
     fuzz_parser.add_argument("server_command", nargs=argparse.REMAINDER)
 
     # scan subcommand (static analysis)
-    scan_parser = sub.add_parser("scan", help="Static security scan of MCP tool schemas")
+    scan_parser = sub.add_parser(
+        "scan", help="Static security scan of MCP tool schemas"
+    )
     scan_parser.add_argument("--format", choices=["table", "json"], default="table")
     scan_parser.add_argument("server_command", nargs=argparse.REMAINDER)
 
@@ -108,7 +116,9 @@ def _run_fuzz(args: argparse.Namespace) -> None:
                 logger.warning("VERDICT: VULNERABLE — %d crashes detected", crashes)
                 sys.exit(2)
             elif report.findings:
-                logger.warning("VERDICT: %d findings require investigation", len(report.findings))
+                logger.warning(
+                    "VERDICT: %d findings require investigation", len(report.findings)
+                )
             else:
                 logger.info("VERDICT: CLEAN — all payloads handled safely")
     except ConnectionError as e:
@@ -139,7 +149,9 @@ def _run_scan(args: argparse.Namespace) -> None:
                 results = scanner.scan_tool(tool)
                 if results:
                     for r in results:
-                        logger.info("  [%s] %s: %s", r.severity.value.upper(), name, r.message)
+                        logger.info(
+                            "  [%s] %s: %s", r.severity.value.upper(), name, r.message
+                        )
                 else:
                     logger.info("  [PASS] %s", name)
     except Exception as e:  # noqa: BLE001

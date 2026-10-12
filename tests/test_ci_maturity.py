@@ -69,7 +69,9 @@ def test_fail_fast_disabled(jobs: dict) -> None:
 
 def test_dependency_caching_enabled(jobs: dict) -> None:
     uses = _uses(jobs["test"])
-    uv_step = next(s for s in _steps(jobs["test"]) if "setup-uv" in str(s.get("uses", "")))
+    uv_step = next(
+        s for s in _steps(jobs["test"]) if "setup-uv" in str(s.get("uses", ""))
+    )
     assert uv_step.get("with", {}).get("enable-cache") is True, (
         "setup-uv must enable dependency caching"
     )
@@ -121,7 +123,9 @@ def test_ruff_lint_and_format_gates(jobs: dict) -> None:
 def test_bandit_security_gate(jobs: dict) -> None:
     assert "security" in jobs, "CI must define a security job"
     run = _run_lines(jobs["security"])
-    assert "bandit -r src/mcp_guard/" in run, "security job must scan src/mcp_guard/ with bandit"
+    assert "bandit -r src/mcp_guard/" in run, (
+        "security job must scan src/mcp_guard/ with bandit"
+    )
 
 
 def test_pip_audit_gate(jobs: dict) -> None:

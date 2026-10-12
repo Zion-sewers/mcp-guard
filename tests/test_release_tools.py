@@ -182,7 +182,17 @@ def test_generate_excludes_merges(tmp_path):
     _commit(repo, "b", "side work")
     subprocess.run(["git", "-C", repo, "checkout", "-q", "master"], check=True)
     subprocess.run(
-        ["git", "-C", repo, "merge", "-q", "--no-ff", "feat", "-m", "Merge branch 'feat'"],
+        [
+            "git",
+            "-C",
+            repo,
+            "merge",
+            "-q",
+            "--no-ff",
+            "feat",
+            "-m",
+            "Merge branch 'feat'",
+        ],
         check=True,
     )
     _tag(repo, "v0.2.0")
@@ -217,7 +227,10 @@ class TestEscapeMd:
         assert escape_md("line one\r\nsmuggled line") == "line one\nsmuggled line"
 
     def test_benign_subject_untouched(self):
-        assert escape_md("fix: handle timeouts in canary") == "fix: handle timeouts in canary"
+        assert (
+            escape_md("fix: handle timeouts in canary")
+            == "fix: handle timeouts in canary"
+        )
 
     def test_first_release_path_also_escaped(self):
         evil = "[x](https://evil.example)"

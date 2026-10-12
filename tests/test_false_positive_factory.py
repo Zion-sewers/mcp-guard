@@ -43,9 +43,13 @@ def test_benign_echo_is_not_critical_shell_injection():
     results = engine.fuzz_tool(_LOOKUP_TOOL)
     assert len(results) > 0
     critical_shell = [
-        r for r in results if r.rule_id.startswith("shell-injection") and r.severity == "critical"
+        r
+        for r in results
+        if r.rule_id.startswith("shell-injection") and r.severity == "critical"
     ]
-    assert not critical_shell, f"false positives: {[r.payload_value for r in critical_shell][:3]}"
+    assert not critical_shell, (
+        f"false positives: {[r.payload_value for r in critical_shell][:3]}"
+    )
 
 
 def test_reflection_is_still_recorded_not_hidden():

@@ -99,7 +99,9 @@ def test_clean_action_has_no_hits():
     trap.smuggle("doc body", source="read_doc")
     verdict = trap.assess(
         AgentAction(
-            kind="tool_call", name="send_email", text=json.dumps({"to": "a@b.c", "body": "hello"})
+            kind="tool_call",
+            name="send_email",
+            text=json.dumps({"to": "a@b.c", "body": "hello"}),
         )
     )
     assert verdict.status == "clean"

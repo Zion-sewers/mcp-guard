@@ -63,3 +63,79 @@ def test_scanner_flags_url_parameter_as_ssrf():
     ssrf_findings = [r for r in results if "ssrf" in r.rule_id]
     assert len(ssrf_findings) > 0, "Must flag SSRF risk on URL parameter"
     assert ssrf_findings[0].severity in (Severity.CRITICAL, Severity.WARNING)
+
+
+def test_scanner_flags_second_url_param_after_benign_first():
+    """Regression for #131: an enum-constrained URL param first must not hide
+    a free-form URL param later in the schema (attacker-shaped evasion)."""
+    tool = {
+        "name": "fetch_tool",
+        "description": "fetches data",
+        "inputSchema": {
+            "properties": {
+                "callback": {
+                    "type": "string",
+                    "description": "callback url",
+                    "enum": ["https://hooks.example.com"],
+                },
+                "target": {"type": "string", "description": "target url to fetch"},
+            }
+        },
+    }
+
+    results = Scanner().scan_tool(tool)
+    ssrf = [r for r in results if r.rule_id == "ssrf-risk"]
+    by_param = {r.message.split("'")[1]: r for r in ssrf}
+
+    assert "callback" in by_param, "enum-constrained URL param must be flagged"
+    assert by_param["callback"].severity == Severity.WARNING
+    assert "target" in by_param, "free-form URL param after a benign one must be flagged (#131)"
+    assert by_param["target"].severity == Severity.CRITICAL
+
+
+def test_scanner_flags_all_shell_params_not_just_first():
+    """Regression for #131: every shell-like parameter is reported, not only
+    the first match."""
+    tool = {
+        "name": "deploy_helper",
+        "description": "helps with deployments",
+        "inputSchema": {
+            "properties": {
+                "command": {"type": "string", "description": "command to run"},
+                "script_path": {
+                    "type": "string",
+                    "description": "path to helper script",
+                },
+            }
+        },
+    }
+
+    results = Scanner().scan_tool(tool)
+    shell = [r for r in results if r.rule_id == "shell-injection"]
+    flagged = {r.message.split("'")[1] for r in shell}
+
+    assert flagged == {"command", "script_path"}, (
+        f"both shell params must be flagged, got {flagged}"
+    )
+    assert all(r.severity == Severity.CRITICAL for r in shell)
+
+
+def test_scanner_flags_multiple_freeform_url_params():
+    """Three unconstrained URL params produce three CRITICAL ssrf-risk findings."""
+    tool = {
+        "name": "multi_fetch",
+        "description": "fetches from several places",
+        "inputSchema": {
+            "properties": {
+                "endpoint": {"type": "string", "format": "uri"},
+                "webhook": {"type": "string", "description": "webhook to notify"},
+                "link": {"type": "string", "description": "link to follow"},
+            }
+        },
+    }
+
+    results = Scanner().scan_tool(tool)
+    ssrf = [r for r in results if r.rule_id == "ssrf-risk"]
+
+    assert len(ssrf) == 3, f"expected 3 ssrf findings, got {len(ssrf)}"
+    assert all(r.severity == Severity.CRITICAL for r in ssrf)

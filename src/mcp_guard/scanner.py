@@ -96,7 +96,9 @@ class Scanner:
             )
             return results
 
-        # Check property names and descriptions
+        # Check property names and descriptions — every matching parameter is
+        # reported. A `break` here would let an attacker-shaped schema evade
+        # detection by placing a benign param first (see #131).
         for prop_name, prop_def in properties.items():
             prop_desc = prop_def.get("description", "").lower()
             prop_text = f"{prop_name} {prop_desc}"
@@ -110,7 +112,6 @@ class Scanner:
                         remediation="Use enum constraints or allowlists for command parameters.",
                     )
                 )
-                break
 
         return results
 
@@ -118,6 +119,9 @@ class Scanner:
         results: list[ScanResult] = []
         tool_ref = name or "unknown"
 
+        # Every URL-typed parameter is reported — no early exit. Stopping after
+        # the first match lets an attacker-shaped schema evade detection by
+        # placing an enum-constrained (benign) URL param first (see #131).
         for prop_name, prop_def in properties.items():
             fmt = prop_def.get("format", "").lower()
             prop_desc = prop_def.get("description", "").lower()
@@ -136,7 +140,6 @@ class Scanner:
                         remediation="Validate URL scheme (https only). Block private IP ranges. Use an allowlist.",
                     )
                 )
-                break
 
         return results
 

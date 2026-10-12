@@ -131,7 +131,11 @@ class FuzzEngine:
         return self._classify_response(tool_name, param_name, payload, response)
 
     def _classify_response(
-        self, tool_name: str, param_name: str, payload: Payload, response: dict[str, Any]
+        self,
+        tool_name: str,
+        param_name: str,
+        payload: Payload,
+        response: dict[str, Any],
     ) -> FuzzResult:
         is_error = response.get("isError", False)
         content = response.get("content", [])

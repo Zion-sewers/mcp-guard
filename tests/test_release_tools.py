@@ -182,7 +182,17 @@ def test_generate_excludes_merges(tmp_path):
     _commit(repo, "b", "side work")
     subprocess.run(["git", "-C", repo, "checkout", "-q", "master"], check=True)
     subprocess.run(
-        ["git", "-C", repo, "merge", "-q", "--no-ff", "feat", "-m", "Merge branch 'feat'"],
+        [
+            "git",
+            "-C",
+            repo,
+            "merge",
+            "-q",
+            "--no-ff",
+            "feat",
+            "-m",
+            "Merge branch 'feat'",
+        ],
         check=True,
     )
     _tag(repo, "v0.2.0")

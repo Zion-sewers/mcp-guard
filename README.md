@@ -12,6 +12,12 @@ Your MCP server exposes tools to any agent that connects. mcp-guard connects fir
 
 Against Anthropic's official `server-memory`, a stock run produced **41 findings**, including critical shell-injection hits where `$(whoami)` returned a normal-looking empty response. Not a crash. A silent execution. That is the dangerous kind. Full receipts in [LEADERBOARD.md](LEADERBOARD.md).
 
+## Watch it run
+
+![mcp-guard fuzz demo](docs/demo.gif)
+
+*Live capture: `mcp-guard fuzz` against a two-tool toy MCP server — 58 findings, 0 crashes, verdict in the table.*
+
 ## 60 seconds
 
 ```bash

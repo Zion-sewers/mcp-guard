@@ -22,6 +22,12 @@ mcp-guard fuzz -- npx @modelcontextprotocol/server-memory
 
 Zero runtime dependencies. Reports in `table`, `json`, or `sarif` for CI.
 
+## How it works
+
+![attack flow](docs/attack-flow.svg)
+
+Every probe packet travels the same pipeline, fuzz input to chaos proxy to policy check, and lands in exactly one verdict lane: `SAFE`, `FINDING`, or `CRASH`. The animation above runs one packet per verdict so you can watch each outcome.
+
 ## What it does
 
 - Six probe types: shell injection, SSRF, overflow, type confusion, prompt injection, indirect injection.

@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="mcp-guard attack flow: a probe packet moves through fuzz input, chaos proxy and policy check, then lands in one of three verdict lanes">
+  <rect width="800" height="450" fill="#101210" rx="8"/>
+  <style>
+    text { font-family: "Space Grotesk", Inter, system-ui, sans-serif; }
+    .mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
+    /* 12s loop = three 4s phases. Each packet is dark except its own phase. */
+    .pkt  { animation: flyA 12s linear infinite; opacity: 0; }
+    .pktB { animation: flyB 12s linear infinite; animation-delay: 4s; opacity: 0; }
+    .pktC { animation: flyC 12s linear infinite; animation-delay: 8s; opacity: 0; }
+    .lampA { animation: lamp 12s linear infinite; }
+    .lampB { animation: lamp 12s linear infinite; animation-delay: 4s; }
+    .lampC { animation: lamp 12s linear infinite; animation-delay: 8s; }
+    .capA { animation: cap 12s linear infinite; }
+    .capB { animation: cap 12s linear infinite; animation-delay: 4s; opacity: 0; }
+    .capC { animation: cap 12s linear infinite; animation-delay: 8s; opacity: 0; }
+    @keyframes flyA {
+      0%    { transform: translate(78px,178px);  opacity: 1; }
+      9.3%  { transform: translate(238px,178px); opacity: 1; }
+      18.6% { transform: translate(468px,178px); opacity: 1; }
+      24%   { transform: translate(628px,178px); opacity: 1; }
+      28%, 30% { transform: translate(648px,270px); opacity: 1; }
+      30.5%, 100% { transform: translate(648px,270px); opacity: 0; }
+    }
+    @keyframes flyB {
+      0%    { transform: translate(78px,178px);  opacity: 1; }
+      9.3%  { transform: translate(238px,178px); opacity: 1; }
+      18.6% { transform: translate(468px,178px); opacity: 1; }
+      24%   { transform: translate(628px,178px); opacity: 1; }
+      28%, 30% { transform: translate(648px,330px); opacity: 1; }
+      30.5%, 100% { transform: translate(648px,330px); opacity: 0; }
+    }
+    @keyframes flyC {
+      0%    { transform: translate(78px,178px);  opacity: 1; }
+      9.3%  { transform: translate(238px,178px); opacity: 1; }
+      18.6% { transform: translate(468px,178px); opacity: 1; }
+      24%   { transform: translate(628px,178px); opacity: 1; }
+      28%, 30% { transform: translate(648px,390px); opacity: 1; }
+      30.5%, 100% { transform: translate(648px,390px); opacity: 0; }
+    }
+    @keyframes lamp {
+      0%, 26%  { opacity: .18; }
+      30%, 97% { opacity: 1; }
+      100%     { opacity: .18; }
+    }
+    @keyframes cap {
+      0%, 28%   { opacity: 0; }
+      32%, 95%  { opacity: 1; }
+      99%, 100% { opacity: 0; }
+    }
+  </style>
+
+  <text x="40" y="44" fill="#D9A13B" font-size="20" font-weight="700">mcp-guard</text>
+  <text x="40" y="68" fill="#F5F1E6" font-size="13" opacity=".85">one probe packet through the pipeline, then a verdict</text>
+
+  <!-- stages -->
+  <g>
+    <rect x="70" y="140" width="160" height="76" rx="10" fill="#171917" stroke="#5C6B5A" stroke-width="1.5"/>
+    <text x="150" y="168" fill="#D9A13B" font-size="12" text-anchor="middle" class="mono">1</text>
+    <text x="150" y="194" fill="#F5F1E6" font-size="14" text-anchor="middle">fuzz input</text>
+    <rect x="300" y="140" width="160" height="76" rx="10" fill="#171917" stroke="#5C6B5A" stroke-width="1.5"/>
+    <text x="380" y="168" fill="#D9A13B" font-size="12" text-anchor="middle" class="mono">2</text>
+    <text x="380" y="194" fill="#F5F1E6" font-size="14" text-anchor="middle">chaos proxy</text>
+    <rect x="530" y="140" width="160" height="76" rx="10" fill="#171917" stroke="#5C6B5A" stroke-width="1.5"/>
+    <text x="610" y="168" fill="#D9A13B" font-size="12" text-anchor="middle" class="mono">3</text>
+    <text x="610" y="194" fill="#F5F1E6" font-size="14" text-anchor="middle">policy check</text>
+    <line x1="230" y1="178" x2="296" y2="178" stroke="#5C6B5A" stroke-width="2"/>
+    <polygon points="296,172 308,178 296,184" fill="#5C6B5A"/>
+    <line x1="460" y1="178" x2="526" y2="178" stroke="#5C6B5A" stroke-width="2"/>
+    <polygon points="526,172 538,178 526,184" fill="#5C6B5A"/>
+  </g>
+
+  <!-- verdict lanes -->
+  <g>
+    <text x="70" y="274" fill="#5C6B5A" font-size="13" font-weight="700" class="mono">SAFE</text>
+    <line x1="130" y1="270" x2="700" y2="270" stroke="#5C6B5A" stroke-width="1" stroke-dasharray="6 6" opacity=".5"/>
+    <text x="70" y="334" fill="#B3402A" font-size="13" font-weight="700" class="mono">FINDING</text>
+    <line x1="150" y1="330" x2="700" y2="330" stroke="#5C6B5A" stroke-width="1" stroke-dasharray="6 6" opacity=".5"/>
+    <text x="70" y="394" fill="#B3402A" font-size="13" font-weight="700" class="mono">CRASH</text>
+    <line x1="140" y1="390" x2="700" y2="390" stroke="#5C6B5A" stroke-width="1" stroke-dasharray="6 6" opacity=".5"/>
+    <circle class="lampA" cx="648" cy="270" r="11" fill="#5C6B5A" opacity=".18"/>
+    <circle class="lampB" cx="648" cy="330" r="11" fill="#B3402A" opacity=".18"/>
+    <circle class="lampC" cx="648" cy="390" r="14" fill="#B3402A" opacity=".18" stroke="#B3402A" stroke-width="3"/>
+  </g>
+
+  <!-- packets (one per phase) -->
+  <circle class="pkt"  cx="0" cy="0" r="9" fill="#D9A13B"/>
+  <circle class="pktB" cx="0" cy="0" r="9" fill="#D9A13B"/>
+  <circle class="pktC" cx="0" cy="0" r="9" fill="#D9A13B"/>
+
+  <!-- verdict captions -->
+  <text class="capA mono" x="400" y="428" fill="#5C6B5A" font-size="13" text-anchor="middle">verdict: SAFE — packet forwarded, no anomaly</text>
+  <text class="capB mono" x="400" y="428" fill="#B3402A" font-size="13" text-anchor="middle">verdict: FINDING — policy violation logged</text>
+  <text class="capC mono" x="400" y="428" fill="#B3402A" font-size="13" font-weight="700" text-anchor="middle">verdict: CRASH — proxy halted, session killed</text>
+</svg>
